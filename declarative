@@ -1,0 +1,104 @@
+pipeline
+{
+    agent any
+    stages
+    {
+        stage('download')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                        git'https://github.com/ajayhp07/maven.git'
+                    }
+                    catch(Exception e)
+                    {
+                        mail bcc: '', body: '', cc: '', from: '', replyTo: '', subject: 'download failed', to: 'ajjuhp783@gmail.com'    
+                    }
+                    
+                }
+            }
+        }
+         stage('build')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                        sh'mvn package'
+                    }
+                    catch(Exception e1)
+                    {
+                        mail bcc: '', body: '', cc: '', from: '', replyTo: '', subject: 'build failed', to: 'ajjuhp783@gmail.com'    
+                    }
+                    
+                }
+            }
+        }
+        stage('deploy')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                        sh'scp /var/lib/jenkins/workspace/declarative/webapp/target/webapp.war ubuntu@172.31.16.43:/var/lib/tomcat9/webapps/qp.war '
+                    }
+                    catch(Exception e)
+                    {
+                        mail bcc: '', body: '', cc: '', from: '', replyTo: '', subject: 'download failed', to: 'ajjuhp783@gmail.com'    
+                    }
+                    
+                }
+            }
+        }
+        stage('test')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                        git'https://github.com/ajayhp07/Test.git'
+                        sh'java -jar /var/lib/jenkins/workspace/declarative/testing.jar'
+                        
+                    }
+                    catch(Exception e)
+                    {
+                        mail bcc: '', body: '', cc: '', from: '', replyTo: '', subject: 'download failed', to: 'ajjuhp783@gmail.com'    
+                    }
+                    
+                }
+            }
+        }
+         stage('delivery')
+        {
+            steps
+            {
+                script
+                {
+                    try
+                    {
+                        sh'scp /var/lib/jenkins/workspace/declarative/webapp/target/webapp.war ubuntu@172.31.29.33:/var/lib/tomcat9/webapps/qpk.war '
+                    }
+                    catch(Exception e)
+                    {
+                        mail bcc: '', body: '', cc: '', from: '', replyTo: '', subject: 'download failed', to: 'ajjuhp783@gmail.com'    
+                    }
+                    
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
